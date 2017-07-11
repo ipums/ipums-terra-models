@@ -1,0 +1,3 @@
+= IPUMS Terra Models
+
+IPUMS Terra Rails Database Models.  Used within various parts of the IPUMS Terra codebase.

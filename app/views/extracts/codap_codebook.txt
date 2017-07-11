@@ -1,0 +1,59 @@
+-----------------------------------------------
+Variables - Columns
+-----------------------------------------------
+<%= @columns_descriptions.join("\n") %>
+
+-----------------------------------------------
+Geographic Units - Rows
+-----------------------------------------------
+<%= @geographic_representation.join("\n") %>
+
+<% if @has_rasters %>
+-----------------------------------------------
+Raster summaries
+-----------------------------------------------
+Raster-based variables have been summarized to produce a value for each geographic unit. The original raster data consists of a spatial grid of cells. Each cell has a value describing the conditions at that point in space, such as annual rainfall or type of land cover. Each geographic unit contains many grid cells. To calculate a value for the unit, the values of the grid cells contained in the unit are summarized. The method of summarization depends on the type of variable described by the raster data.
+
+<% if @mean_variables.count > 0 %>
+The following variables are the average value of the cells in each unit: 
+<%= @mean_variables.join("\n") %>
+<%end%>
+
+<% if @percent_variables.count > 0 %>
+The following variables are the percentage of the total area of the unit that has a particular land cover class or land use:
+<%= @percent_variables.join("\n") %>
+<%end%>
+
+<%if @num_class_variables.count > 0 %>
+The following variables are based on rasters that represent the land cover class of every cell in the unit. 
+<%= @num_class_variables.join("\n") %>
+<%end%>
+<% end %>
+
+-----------------------------------------------
+Citation and Use of IPUMS Terra Data 
+-----------------------------------------------
+
+All persons are granted a limited license to use this documentation and the
+accompanying data, subject to the following conditions:
+
+* Publications and research reports employing the data (either tabular or GIS)
+  must cite it appropriately. The citation should include the following:
+
+    Minnesota Population Center. 
+    Terra Populus: Integrated Data on Population and Environment: Version 1 [dataset]. 
+    Minneapolis, MN: University of Minnesota, 2016. http://doi.org/10.18128/D090.V1
+
+* If possible, citations should also include the URL for the TerraPop site:
+
+    https://data.terrapop.org
+
+-----------------------------------------------
+Data Sources 
+-----------------------------------------------
+<%= TerrapopSample.long_citation(@request.terrapop_samples) %>
+
+
+<%= RasterDataset.long_citation(@request.raster_datasets) %>
+
+

@@ -1,0 +1,74 @@
+{
+   "name":"",
+   "guid":1,
+   "components":[
+      {
+         "type":"DG.TableView",
+         "guid":79,
+         "componentStorage":{
+            "_links_":{
+               "context":{
+                  "type":"DG.DataContextRecord",
+                  "id":19
+               }
+            },
+            "attributeWidths":[],
+            "title": ""
+         },
+         "layout":{
+            "width":390,
+            "height":250,
+            "left":45,
+            "top":20,
+            "zIndex":94,
+            "isVisible":true
+         },
+         "savedHeight":null
+      },
+      {
+        "type": "DG.TextView",
+        "guid": 6,
+        "componentStorage": {
+          "text": "",
+          "title": "Codebook",
+          "name": "Text"
+        },
+        "layout": {
+          "width": 430,
+          "height": 280,
+          "zIndex": 21,
+          "left": 700,
+          "top": 5,
+          "isVisible": true
+        },
+        "savedHeight": null
+      }      
+   ],
+   "contexts":[
+      {
+         "type":"DG.DataContext",
+         "document":1,
+         "guid":19,
+         "flexibleGroupingChangeFlag":false,
+         "collections":[
+            {
+               "areParentChildLinksConfigured":false,
+               "attrs":[],
+               "cases":[],
+               "caseName":null,
+               "childAttrName":null,
+               "collapseChildren":null,
+               "guid":20,
+               "name":"cases",
+               "type":"DG.Collection"
+            }
+         ],
+         "contextStorage":{
+
+         }
+      }
+   ],
+   "appName":"",
+   "appVersion":"",
+   "appBuildNum":""
+}

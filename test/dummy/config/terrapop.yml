@@ -1,0 +1,204 @@
+#
+# This file is autoloaded by the singleton-esque-thing TerrapopConfiguration (code for it is located in models/)
+#
+#
+
+area_data:
+  threshold: 7.0
+  smoothed_value: 4.0
+  redact_regions_below: 100.0
+
+application:
+  ui:
+    valid_url_hashes:
+      - show_all_datasets
+
+  countries:
+    # to include all countries in the database, specify: :all
+    - br
+    - mw
+
+  settings:
+    # these are default settings that get sucked into terrapop_settings
+    enable_country_comparability: true
+    ipumsi_approval_email_address: email@domain.edu
+    force_extract_fail: false
+    force_extract_fail_email: ""
+
+  environments:
+    default: &default_environment
+      force_pure_ruby_extract_system: false
+      ddi:
+        domain: beta.terrapop.org
+      data_in_files: true
+      extract_offline: true
+      raster_sample_precision: 1.0
+      max_threads: 2
+      extracts: <%= Rails.root.to_s %>/public/extracts
+      source_data:
+        microdata: /output_data/current
+        rasters: <%= Rails.root.to_s %>/data/v1/rasters
+        gis_rasters:
+          - '/rasters/GLI/bulkload/*.copy.gz'
+          - '/rasters/GLI-agland/bulkload/*.copy.gz'
+          - '/rasters/GLC2000/bulkload/*.copy.gz'
+          - '/rasters/WorldClim/bulkload/*.copy.gz'
+        modis_rasters:
+          - '/rasters/MODIS/bulkload/*.copy.gz'
+        nhgis_metadata: '/istads/data'
+      mailer:
+        default_url_options:
+          host: 'beta.terrapop.org'
+      extract_group: terrapop
+
+    test: &test
+      <<: *default_environment
+      extracts:  <%= Rails.root.to_s %>/tmp/test/extracts
+      source_data:
+        microdata: /microdata
+        microdata_unit: <%= Rails.root.to_s %>/test/microdata
+        nhgis_metadata: <%= Rails.root.to_s %>/data/nhgis/data
+        nhgis_shapefiles: <%= Rails.root.to_s %>/data/nhgis/nhgis_shapefiles.sql.gz
+
+    development: &development
+      <<: *default_environment
+      max_threads: 4
+      extract_offline: true
+      extracts:  <%= Rails.root.to_s %>/tmp/test/extracts
+      source_data:
+        microdata: <%= Rails.root.to_s %>/data/v1/microdata/ipumsi
+        nhgis_metadata: <%= Rails.root.to_s %>/data/nhgis/data
+
+    production: &production
+      <<: *default_environment
+      max_threads: 8
+      source_data:
+        microdata: /microdata
+        gis_rasters:
+          - '/rasters/GLI/bulkload/*.copy.gz'
+          - '/rasters/GLI-agland/bulkload/*.copy.gz'
+          - '/rasters/GLC2000/bulkload/*.copy.gz'
+          - '/rasters/WorldClim/bulkload/*.copy.gz'
+        modis_rasters:
+          - '/rasters/MODIS/bulkload/*.copy.gz'
+        nhgis_metadata: '/istads/data'
+
+    staging: &staging
+      <<: *default_environment
+      max_threads: 8
+      source_data:
+        microdata: /microdata
+        gis_rasters:
+          - '/rasters/GLI/bulkload/*.copy.gz'
+          - '/rasters/GLI-agland/bulkload/*.copy.gz'
+          - '/rasters/GLC2000/bulkload/*.copy.gz'
+          - '/rasters/WorldClim/bulkload/*.copy.gz'
+        modis_rasters:
+          - '/rasters/MODIS/bulkload/*.copy.gz'
+        nhgis_metadata: '/istads/data'
+      mailer:
+        default_url_options:
+          host: 'staging2.terrapop.org'
+
+    demo: &demo
+      <<: *default_environment
+      max_threads: 8
+      source_data:
+        microdata: /microdata
+        gis_rasters:
+          - '/rasters/GLI/bulkload/*.copy.gz'
+          - '/rasters/GLI-agland/bulkload/*.copy.gz'
+          - '/rasters/GLC2000/bulkload/*.copy.gz'
+          - '/rasters/WorldClim/bulkload/*.copy.gz'
+        modis_rasters:
+          - '/rasters/MODIS/bulkload/*.copy.gz'
+        nhgis_metadata: '/istads/data'
+      mailer:
+        default_url_options:
+          host: 'demo.terrapop.org'
+
+    internal: &internal
+      <<: *default_environment
+      max_threads: 8
+      source_data:
+        microdata: /microdata
+        gis_rasters:
+          - '/rasters/GLI/bulkload/*.copy.gz'
+          - '/rasters/GLI-agland/bulkload/*.copy.gz'
+          - '/rasters/GLC2000/bulkload/*.copy.gz'
+          - '/rasters/WorldClim/bulkload/*.copy.gz'
+        modis_rasters:
+          - '/rasters/MODIS/bulkload/*.copy.gz'
+        nhgis_metadata: '/istads/data'
+      mailer:
+        default_url_options:
+          host: 'internal.terrapop.org'
+
+    staging_new:
+      <<: *staging
+      mailer:
+        default_url_options:
+          host: 'staging.terrapop.org'
+
+    live: &live
+      <<: *production
+      mailer:
+        default_url_options:
+          host: 'data.terrapop.org'
+
+  output:
+    zipfile:
+      extension: zip
+      mimetype:  application/zip
+    csvfile:
+      extension: csv
+      mimetype:  text/csv
+    xlsxfile:
+      extension: xlsx
+      mimetype:  application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+
+  boundaries:
+    query: |
+      SELECT gi.label as "label", gi.code as "geoid", b.geog
+      FROM sample_geog_levels sgl
+      INNER JOIN geog_instances gi on sgl.id = gi.sample_geog_level_id
+      INNER JOIN boundaries b on b.geog_instance_id = gi.id
+      INNER JOIN maps m on m.id = b.map_id
+      WHERE sgl.id = %d
+
+  ipumsi:
+    username: 'user'
+    password: 'pass'
+    url: "https://international.ipums.org/frequencies/"
+
+migrations:
+  # special_models are all the pseudo-models that exist in the models/ directory
+  # this is used in the migration for changing defaults on tables that will be
+  # loaded from IPUMSI
+  #
+  # The pseudo-model 'Label' is actually just the model 'Tag'; it is just a nomenclature thing, but
+  # there is no table called 'labels'
+  #
+  special_models:
+    - :labels
+    - :extract_variable_stubs
+    - :terrapop_configurations
+    - :area_data_table_group_memberships
+    - :raster_variable_group_memberships
+    - :codebooks
+    - :raster_values
+    - :ddi2_codebooks
+    - :markup_transforms
+    - :ipums_users
+    - :ipums_registrations
+    - :ipums_academic_statuses
+    - :ipums_anticipated_results
+    - :ipums_departments
+    - :bare_users
+    - :terrapop_extract_informations
+    - :sample_details
+    - :sample_detail_groups
+
+  default_timestamp_columns:
+    - :created_at
+    - :updated_at
